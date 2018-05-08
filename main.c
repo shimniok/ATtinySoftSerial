@@ -1,21 +1,13 @@
 /*
- * TinySoftSerial.c
+ * main.c - example for using TinySoftSerial for ATtiny
  *
  * Created: 5/8/2018 3:47:42 PM
- * Author : User
+ * Author : Michael Shimniok
  */ 
 
 #include <avr/io.h>
 #include <util/delay.h>
 #include "SoftwareSerial.h"
-
-// Timer timing for baud rates
-//
-#define OCR4800		 52	// div 64
-#define OCR9600		 26	// div 64
-#define OCR19200	104	// div 8
-#define OCR38400	 52	// div 8
-#define OCR115200	138	// div 1
 
 // incoming buffer
 volatile char *inbuf[32];

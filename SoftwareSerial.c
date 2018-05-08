@@ -1,6 +1,6 @@
 /*
  SoftwareSerial.c (formerly SoftwareSerial.cpp, formerly NewSoftSerial.c) -
- Single-instance software serial library for ATtiny84A, modified from Arduino SoftwareSerial.
+ Single-instance software serial library for ATtiny, modified from Arduino SoftwareSerial.
  -- Interrupt-driven receive and other improvements by ladyada
  (http://ladyada.net)
  -- Tuning, circular buffer, derivation from class Print/Stream,
@@ -89,22 +89,43 @@ typedef struct _DELAY_TABLE {
 	unsigned short tx_delay;
 } DELAY_TABLE;
 
-// 16MHz
 static const DELAY_TABLE PROGMEM table[] = {
-		//  baud    rxcenter   rxintra    rxstop    tx
-		{ 115200, 1, 17, 17, 12, },			// 117647 off by 2.12%, causes problems
-		{ 57600, 10, 37, 37, 33, },			// 57971 off by 0.644%, causes problems
-		{ 38400, 25, 57, 57, 54, },
-		{ 31250, 31, 70, 70, 68, },
-		{ 28800, 34, 77, 77, 74, },
-		{ 19200, 54, 117, 117, 114, },
-		{ 14400, 74, 156, 156, 153, },
-		{ 9600, 114, 236, 236, 233, },
-		{ 4800, 233, 474, 474, 471, },
-		{ 2400, 471, 950, 950, 947, },
-		{ 1200, 947, 1902, 1902, 1899, },
-		{ 600, 1902, 3804, 3804, 3800, },
-		{ 300, 3804, 7617, 7617, 7614, }, };
+#if (F_CPU == 16000000UL)
+	// 16MHz
+	// baud    rxcenter   rxintra    rxstop    tx
+	{ 115200, 1, 17, 17, 12, },			// 117647 off by 2.12%, causes problems
+	{ 57600, 10, 37, 37, 33, },			// 57971 off by 0.644%, causes problems
+	{ 38400, 25, 57, 57, 54, },
+	{ 31250, 31, 70, 70, 68, },
+	{ 28800, 34, 77, 77, 74, },
+	{ 19200, 54, 117, 117, 114, },
+	{ 14400, 74, 156, 156, 153, },
+	{ 9600, 114, 236, 236, 233, },
+	{ 4800, 233, 474, 474, 471, },
+	{ 2400, 471, 950, 950, 947, },
+	{ 1200, 947, 1902, 1902, 1899, },
+	{ 600, 1902, 3804, 3804, 3800, },
+	{ 300, 3804, 7617, 7617, 7614, }, };
+
+#elif (F_CPU == 8000000UL)
+	// 8MHz
+	// baud rxcenter rxintra rxstop tx
+	{ 38400, 1, 17, 17, 12, },
+	{ 31250, 10, 37, 37, 33, },
+	{ 28800, 25, 57, 57, 54, },
+	{ 19200, 31, 70, 70, 68, },
+	{ 14400, 34, 77, 77, 74, },
+	{ 9600, 54, 117, 117, 114, },
+	{ 4800, 74, 156, 156, 153, },
+	{ 2400, 114, 236, 236, 233, },
+	{ 1200, 233, 474, 474, 471, },
+	{ 600, 471, 950, 950, 947, },
+	{ 300, 947, 1902, 1902, 1899, }
+#else
+#error Please define F_CPU to one of the allowable speeds in this header file
+#endif
+};
+
 
 const int XMIT_START_ADJUSTMENT = 5;
 
